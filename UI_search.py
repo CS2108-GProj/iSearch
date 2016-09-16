@@ -18,6 +18,7 @@ class UI_class:
         self.master = master
         self.init_UI()
 
+    def run(self):
         self.master.mainloop()
 
     # Initialize UI
@@ -26,9 +27,9 @@ class UI_class:
         topframe.pack()
 
         # Search Buttons
-        self.bbutton = Button(topframe, text=" Choose an image ", command=self.input_query)
+        self.bbutton = Button(topframe, text=" Choose an image ", command=self.on_input_query)
         self.bbutton.grid(row=1, column=1)
-        self.cbutton = Button(topframe, text=" Search ", command=self.search)
+        self.cbutton = Button(topframe, text=" Search ", command=self.on_search)
         self.cbutton.grid(row=1, column=2)
 
         # Features
@@ -60,24 +61,29 @@ class UI_class:
         self.logo = Label(topframe, text="iSearch")
         self.logo.grid(row=5)
 
-
+    """
+        UI events
+    """
     # Input query
-    def input_query(self):
-        self.browse_query_img()
+    def on_input_query(self):
+        self.display_query_img_browser()
         self.display_query_img()
 
 
-    # Call search
-    def search(self):
+    # Call on_search
+    def on_search(self):
         if self.Color_Histogram.get():
-            self.process_query_img()
-            self.show_results_imgs()
+            self.process_ch()
+            self.display_results_imgs()
         else:
-            self.generate_error("Please choose a feature")
+            self.display_error("Please choose a feature")
 
 
-    # Browse local query image
-    def browse_query_img(self):
+    """
+        UI update
+    """
+    # Display local query image browser
+    def display_query_img_browser(self):
         from tkFileDialog import askopenfilename
         self.filename = tkFileDialog.askopenfile(title='Choose an Image File').name
 
@@ -94,20 +100,12 @@ class UI_class:
         self.logo.config(text="Upload 1 image")
 
 
-    # Process query image, extract image data according to selected features
-    def process_query_img(self):
-        if (self.CH_check_box):
-            self.process_ch()
-        else:
-            self.generate_error("Please choose one feature")
-
-
     # Show result images
-    def show_results_imgs(self):
+    def display_results_imgs(self):
         self.output_img_frame = Frame(self.master)
         self.output_img_frame.pack()
 
-        # perform the search
+        # perform the on_search
         searcher = Searcher("index.csv")
         results = searcher.search(self.queryfeatures)
 
@@ -124,11 +122,13 @@ class UI_class:
             image_count += 1
 
 
-    # Display error
-    def generate_error(self, message):
+    # Display Error
+    def display_error(self, message):
         self.error_box.config(text=message)
 
-
+    """
+        Feature Process functions
+    """
     # Process with color histogram
     def process_ch(self):
         # process query image to feature vector
@@ -140,10 +140,17 @@ class UI_class:
         self.queryfeatures = cd.describe(query)
 
 
+    # Prcess with visual concept
+    def process_vc(self):
+        # To be implemented
+        return None
+
     # Test function on feature triggering
     def trigger_color_historgram(self):
         print ">>>>>>> CH feature is ", self.Color_Histogram.get()
 
 
-root = Tk()
-window = UI_class(root, 'dataset')
+if __name__ == "__main__":
+    root = Tk()
+    window = UI_class(root, 'dataset')
+    window.run()
