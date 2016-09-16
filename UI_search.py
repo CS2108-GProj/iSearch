@@ -1,6 +1,6 @@
 # import the necessary packages
-from pyimagesearch.colordescriptor import ColorDescriptor
-from pyimagesearch.searcher import Searcher
+from color_histogram.colordescriptor import ColorDescriptor
+from color_histogram.searcher import Searcher
 import cv2
 from Tkinter import *
 import tkFileDialog
@@ -21,45 +21,55 @@ class UI_class:
 
         # Search Buttons
         topspace = Label(topframe).grid(row=0, columnspan=2)
-        self.bbutton = Button(topframe, text=" Choose an image ", command=self.browse_query_img)
+        self.bbutton = Button(topframe, text=" Choose an image ", command=self.input_query)
         self.bbutton.grid(row=1, column=1)
-        self.cbutton = Button(topframe, text=" Search ", command=self.show_results_imgs)
+        self.cbutton = Button(topframe, text=" Search ", command=self.search)
         self.cbutton.grid(row=1, column=2)
 
         # Features
-        self.CH_check_box = Checkbutton(topframe, text="Color Histogram", variable=self.Color_Histogram, onvalue=True, offvalue=False, command=self.trigger_CH)
+        self.CH_check_box = Checkbutton(topframe, text="Color Histogram", variable=self.Color_Histogram, onvalue=True, offvalue=False, command=self.trigger_color_historgram)
         self.CH_check_box.grid(row = 2, column = 1)
         downspace = Label(topframe).grid(row=3, columnspan=4)
 
         self.master.mainloop()
 
 
-    def trigger_CH(self):
-        print ">>>>>>> CH feature is ", self.Color_Histogram.get()
+    # Input query
+    def input_query(self):
+        self.browse_query_img()
+        self.display_query_img()
 
 
+    # Call search
+    def search(self):
+        self.process_query_img()
+        self.show_results_imgs()
+
+
+    # Browse local query image
     def browse_query_img(self):
-
-        self.query_img_frame = Frame(self.master)
-        self.query_img_frame.pack()
         from tkFileDialog import askopenfilename
         self.filename = tkFileDialog.askopenfile(title='Choose an Image File').name
 
-        # process query image to feature vector
-        # initialize the image descriptor
-        cd = ColorDescriptor((8, 12, 3))
-        # load the query image and describe it
-        query = cv2.imread(self.filename)
-        self.queryfeatures = cd.describe(query)
 
-        # show query image
+    # Display input query image
+    def display_query_img(self):
         image_file = Image.open(self.filename)
+
         resized = image_file.resize((100, 100), Image.ANTIALIAS)
         im = ImageTk.PhotoImage(resized)
-        image_label = Label(self.query_img_frame, image=im)
+        image_label = Label(self.master, image=im)
         image_label.pack()
 
-        self.query_img_frame.mainloop()
+        self.master.mainloop()
+
+
+    # Process query image, extract image data according to selected features
+    def process_query_img(self):
+        if (self.CH_check_box):
+            self.process_ch()
+        else:
+            self.generate_error("Please choose one feature")
 
 
     def show_results_imgs(self):
@@ -84,7 +94,30 @@ class UI_class:
             myvar.image = tkimage
             myvar.grid(row=r, column=c)
 
-        self.result_img_frame.mainloop()
+        self.master.mainloop()
+
+
+    # Display error
+    def generate_error(self, message):
+        w = Label(self.master, text=message)
+        w.pack()
+
+        self.master.mainloop()
+
+
+    # Process with color histogram
+    def process_ch(self):
+        # process query image to feature vector
+        # initialize the image descriptor
+        cd = ColorDescriptor((8, 12, 3))
+
+        # load the query image and describe it
+        query = cv2.imread(self.filename)
+        self.queryfeatures = cd.describe(query)
+
+    # Test function on feature triggering
+    def trigger_color_historgram(self):
+        print ">>>>>>> CH feature is ", self.Color_Histogram.get()
 
 
 root = Tk()
