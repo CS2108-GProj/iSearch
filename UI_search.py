@@ -32,7 +32,7 @@ class UI_class:
 
         # Features
         self.CH_check_box = Checkbutton(topframe, text="Color Histogram", variable=self.Color_Histogram, onvalue=True,
-                                        offvalue=False, command=self.trigger_color_historgram)
+                                        offvalue=False, command=self.on_trigger_color_histogram)
 
         # Input Image Label
         self.input_image_label = Label(topframe)
@@ -55,7 +55,7 @@ class UI_class:
             cur_label.grid(row=r, column=c)
             self.output_image_label_list.append(cur_label)
 
-
+        # Position UI Elements
         self.browse_button.grid(row=1, column=1)
         self.search_button.grid(row=2, column=1)
         self.CH_check_box.grid(row=3, column=1)
@@ -81,6 +81,12 @@ class UI_class:
             self.display_results_imgs(result)
         else:
             self.display_error("Please choose a feature")
+
+            # Test function on feature triggering
+
+    # Log button triggering
+    def on_trigger_color_histogram(self):
+        print ">>>>>>> CH feature is ", self.Color_Histogram.get()
 
 
     """
@@ -148,10 +154,6 @@ class UI_class:
     def process_vc(self):
         # To be implemented
         return None
-
-    # Test function on feature triggering
-    def trigger_color_historgram(self):
-        print ">>>>>>> CH feature is ", self.Color_Histogram.get()
 
 
 if __name__ == "__main__":
