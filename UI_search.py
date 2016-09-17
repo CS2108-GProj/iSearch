@@ -27,23 +27,25 @@ class UI_class:
         topframe.pack()
 
         # Search Buttons
-        self.bbutton = Button(topframe, text=" Choose an image ", command=self.on_input_query)
-        self.bbutton.grid(row=1, column=1)
-        self.cbutton = Button(topframe, text=" Search ", command=self.on_search)
-        self.cbutton.grid(row=1, column=2)
+        self.browse_button = Button(topframe, text=" Choose an image ", command=self.on_input_query)
+        self.search_button = Button(topframe, text=" Search ", command=self.on_search)
 
         # Features
         self.CH_check_box = Checkbutton(topframe, text="Color Histogram", variable=self.Color_Histogram, onvalue=True,
                                         offvalue=False, command=self.trigger_color_historgram)
-        self.CH_check_box.grid(row=2, column=1)
 
         # Input Image Label
         self.input_image_label = Label(topframe)
-        self.input_image_label.grid(row=3, column=1)
+
+        # Error Dialog Box
+        self.error_box = Label(topframe)
+
+        # Logo
+        self.logo = Label(topframe, text="iSearch")
 
         # Output Image Label List
         self.output_img_frame = Frame(self.master)
-        self.output_img_frame.pack()
+        self.output_img_frame.pack(side=RIGHT)
 
         self.output_image_label_list = []
         COLUMNS = 5
@@ -53,13 +55,14 @@ class UI_class:
             cur_label.grid(row=r, column=c)
             self.output_image_label_list.append(cur_label)
 
-        # Error Dialog Box
-        self.error_box = Label(topframe)
-        self.error_box.grid(row=4)
 
-        # Logo
-        self.logo = Label(topframe, text="iSearch")
-        self.logo.grid(row=5)
+        self.browse_button.grid(row=1, column=1)
+        self.search_button.grid(row=2, column=1)
+        self.CH_check_box.grid(row=3, column=1)
+        self.input_image_label.grid(row=4, column=1)
+        self.error_box.grid(row=5, column=1)
+        self.logo.grid(row=6, column=1)
+
 
     """
         UI events
@@ -73,8 +76,9 @@ class UI_class:
     # Call on_search
     def on_search(self):
         if self.Color_Histogram.get():
-            self.process_ch()
-            self.display_results_imgs()
+            query = self.process_ch()
+            result = self.search_ch(query)
+            self.display_results_imgs(result)
         else:
             self.display_error("Please choose a feature")
 
@@ -101,20 +105,12 @@ class UI_class:
 
 
     # Show result images
-    def display_results_imgs(self):
-        self.output_img_frame = Frame(self.master)
-        self.output_img_frame.pack()
-
-        # perform the on_search
-        searcher = Searcher("index.csv")
-        results = searcher.search(self.queryfeatures)
-
-        # show result pictures
+    def display_results_imgs(self, results):
         image_count = 0
         for (score, resultID) in results:
             # load the result image and display it
 
-            im = Image.open( self.search_path + "/" + resultID)
+            im = Image.open(self.search_path + "/" + resultID)
             resized = im.resize((100, 100), Image.ANTIALIAS)
             tkimage = ImageTk.PhotoImage(resized)
             self.output_image_label_list[image_count].config(image=tkimage)
@@ -126,8 +122,9 @@ class UI_class:
     def display_error(self, message):
         self.error_box.config(text=message)
 
+
     """
-        Feature Process functions
+        Feature Process & Search functions
     """
     # Process with color histogram
     def process_ch(self):
@@ -137,7 +134,14 @@ class UI_class:
 
         # load the query image and describe it
         query = cv2.imread(self.filename)
-        self.queryfeatures = cd.describe(query)
+        return cd.describe(query)
+
+
+    # Search with CH
+    def search_ch(self, query):
+        # perform the on_search
+        searcher = Searcher("index.csv")
+        return searcher.search(query)
 
 
     # Prcess with visual concept
