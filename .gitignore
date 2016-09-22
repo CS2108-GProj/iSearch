@@ -1,5 +1,8 @@
 visual_concept/imagenet/
+visual_concept/indexes/
 visual_concept/predictions.csv
+
+ImageData/
 
 .idea/
 
