@@ -35,7 +35,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os.path
+import os
+from glob import glob
 import re
 import sys
 import tarfile
@@ -171,17 +172,17 @@ def run_inference_on_image(image):
     predictions = sess.run(softmax_tensor,
                            {'DecodeJpeg/contents:0': image_data})
 
-    # Save the visual concept matrix of the 1000 dataset.
-    np.savetxt("predictions.csv", predictions, delimiter=",")
+    # Save the visual concept matrix of the 1008 dataset.
+    base = os.path.basename(image)
+    fileName = os.path.splitext(base)[0]
+    np.savetxt('./indexes/%s.csv' % (fileName), predictions, delimiter=",")
 
-    ## below are codes for outputing readable string
+    # below are codes for outputing readable string
     # predictions = np.squeeze(predictions)
-    #
-    # # Creates node ID --> English string lookup.
+
+    # Creates node ID --> English string lookup.
     # node_lookup = NodeLookup()
-    # print(predictions)
     # top_k = predictions.argsort()[-FLAGS.num_top_predictions:][::-1]
-    # print(top_k)
     # for node_id in top_k:
     #   human_string = node_lookup.id_to_string(node_id)
     #   score = predictions[node_id]
@@ -209,10 +210,21 @@ def maybe_download_and_extract():
 
 def main(_):
   maybe_download_and_extract()
-  image = (FLAGS.image_file if FLAGS.image_file else
-           os.path.join(FLAGS.model_dir, 'cropped_panda.jpg')) # test image
-  run_inference_on_image(image)
-
+  result = [y for x in os.walk('../ImageData/train/data') for y in glob(os.path.join(x[0], '*.jpg'))]
+  images = set()
+  duplicate = []
+  for image in result:
+    # avoid duplicate
+    if os.path.isfile(image):
+      base = os.path.basename(image)
+      fileName = os.path.splitext(base)[0]
+      if fileName in images:
+        duplicate.append(image)
+      else:
+        images.add(fileName)
+      continue
+    with tf.Graph().as_default():
+      run_inference_on_image(image)
 
 if __name__ == '__main__':
   tf.app.run()
