@@ -1,6 +1,6 @@
 # import the necessary packages
 from color_histogram.colordescriptor import ColorDescriptor
-from color_histogram.searcher import Searcher
+from color_histogram.match import Searcher as CH_Searcher
 import cv2
 from Tkinter import *
 import tkFileDialog
@@ -146,7 +146,7 @@ class UI_class:
     # Search with CH
     def search_ch(self, query):
         # perform the on_search
-        searcher = Searcher("index.csv")
+        searcher = CH_Searcher("index.csv")
         return searcher.search(query)
 
 

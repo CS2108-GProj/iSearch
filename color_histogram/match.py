@@ -1,19 +1,33 @@
 # import the necessary packages
+import os
+from colordescriptor import ColorDescriptor
+import cv2
 import numpy as np
 import csv
-import cv2
+import prepare
 
 class Searcher:
-    def __init__(self, indexPath):
+    def __init__(self, image_set_path='../dataset', data_set_path='ch.txt'):
         # store our index path
-        self.indexPath = indexPath
+        self.data_set_path = data_set_path
+        self.image_set_path = image_set_path
 
-    def search(self, queryFeatures, limit = 10):
+        if not os.path.exists(data_set_path):
+            prepare.prepare_local(image_set_path=image_set_path, data_set_path=data_set_path)
+
+
+    def search(self, query_image, limit = 10):
         # initialize our dictionary of results
+        cd = ColorDescriptor((8, 12, 3))
+
+        # load the query image and describe it
+        img_file = cv2.imread(query_image)
+        query = cd.describe(img_file)
+
         results = {}
 
         # open the index file for reading
-        with open(self.indexPath) as f:
+        with open(self.data_set_path) as f:
             # initialize the CSV reader
             reader = csv.reader(f)
 
@@ -23,7 +37,7 @@ class Searcher:
                 # chi-squared distance between the features in our index
                 # and our query features
                 features = [float(x) for x in row[1:]]
-                d = self.chi2_distance(features, queryFeatures)
+                d = self.chi2_distance(features, query)
 
                 # now that we have the distance between the two feature
                 # vectors, we can udpate the results dictionary -- the
@@ -49,3 +63,7 @@ class Searcher:
 
         # return the chi-squared distance
         return d
+
+if __name__ == "__main__":
+    sample_query = "sample.jpg"
+    print Searcher().search(sample_query)

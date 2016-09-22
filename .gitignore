@@ -161,3 +161,8 @@ sift_vw/query.jpg
 sift_vw/sift_data/sample_ferrari_sift_lsh.txt
 sift_vw/sample_dataset/
 
+# CH sample data
+color_histogram/ch.txt
+color_histogram/sample.jpg
+
+
