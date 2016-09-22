@@ -154,3 +154,10 @@ fabric.properties
 index.csv
 dataset/
 queries/
+
+
+# Sift sample data
+sift_vw/query.jpg
+sift_vw/sift_data/sample_ferrari_sift_lsh.txt
+sift_vw/sample_dataset/
+
