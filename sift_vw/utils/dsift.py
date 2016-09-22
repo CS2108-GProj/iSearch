@@ -188,7 +188,7 @@ class SingleSiftExtractor(DsiftExtractor):
         return DsiftExtractor.process_image(self, image, False, False)[0]
     
 if __name__ == '__main__':
-    # For testing only, to compare 2 images, they should have same resolution, otherwise the number of feature points would be different
+    # ignore this. I only use this for testing purpose...
     from scipy import misc
     extractor = DsiftExtractor(8,16,1)
     image = misc.imread('lena.png')
