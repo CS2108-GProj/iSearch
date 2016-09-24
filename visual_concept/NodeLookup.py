@@ -14,8 +14,8 @@ import tensorflow as tf
 class NodeLookup(object):
   """Converts integer node ID's to human readable labels."""
 
-  def __init__(self):
-    self.model_dir = './imagenet'
+  def __init__(self, model_dir = './imagenet'):
+    self.model_dir = model_dir
     label_lookup_path = os.path.join(self.model_dir, 'imagenet_2012_challenge_label_map_proto.pbtxt')
     uid_lookup_path = os.path.join(self.model_dir, 'imagenet_synset_to_human_label_map.txt')
     self.node_lookup = self.load(label_lookup_path, uid_lookup_path)

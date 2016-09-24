@@ -1,20 +1,21 @@
 # import the necessary packages
-from color_histogram.colordescriptor import ColorDescriptor
-from color_histogram.match import Searcher as CH_Searcher
-import cv2
 from Tkinter import *
 import tkFileDialog
 from PIL import Image, ImageTk
+#import integrate_search
+from integrate_search import search as iSearch
 
 class UI_class:
 
-    def __init__(self, master, search_path):
+    def __init__(self, master):
 
         # Features
         self.Color_Histogram = BooleanVar()
+        self.Visual_Keyword = BooleanVar()
+        self.Visual_Concept = BooleanVar()
 
         # Initialize frame
-        self.search_path = search_path
+        #self.search_path = search_path
         self.master = master
         self.init_UI()
 
@@ -32,7 +33,11 @@ class UI_class:
 
         # Features
         self.CH_check_box = Checkbutton(topframe, text="Color Histogram", variable=self.Color_Histogram, onvalue=True,
-                                        offvalue=False, command=self.on_trigger_color_histogram)
+                                        offvalue=False)
+        self.VW_check_box = Checkbutton(topframe, text="Visual Keyword", variable=self.Visual_Keyword, onvalue=True,
+                                        offvalue=False)
+        self.VC_check_box = Checkbutton(topframe, text="Visual Concept + Deep Learning", variable=self.Visual_Concept, onvalue=True,
+                                        offvalue=False)
 
         # Input Image Label
         self.input_image_label = Label(topframe)
@@ -58,7 +63,11 @@ class UI_class:
         # Position UI Elements
         self.browse_button.grid(row=1, column=1)
         self.search_button.grid(row=2, column=1)
+
         self.CH_check_box.grid(row=3, column=1)
+        self.VW_check_box.grid(row=3, column=2)
+        self.VC_check_box.grid(row=3, column=3)
+
         self.input_image_label.grid(row=4, column=1)
         self.error_box.grid(row=5, column=1)
         self.logo.grid(row=6, column=1)
@@ -75,18 +84,14 @@ class UI_class:
 
     # Call on_search
     def on_search(self):
-        if self.Color_Histogram.get():
-            query = self.process_ch()
-            result = self.search_ch(query)
+        if self.Color_Histogram.get() or self.Visual_Keyword.get() or self.Visual_Concept.get():
+            result = iSearch(query=self.filename, CH=self.Color_Histogram.get(), VW=self.Visual_Keyword.get(), VC=self.Visual_Concept.get(), threshold=1500, result_limit=10)
+            print(result)
             self.display_results_imgs(result)
         else:
             self.display_error("Please choose a feature")
 
             # Test function on feature triggering
-
-    # Log button triggering
-    def on_trigger_color_histogram(self):
-        print ">>>>>>> CH feature is ", self.Color_Histogram.get()
 
 
     """
@@ -113,10 +118,10 @@ class UI_class:
     # Show result images
     def display_results_imgs(self, results):
         image_count = 0
-        for (score, resultID) in results:
+        for item_score in results:
             # load the result image and display it
 
-            im = Image.open(self.search_path + "/" + resultID)
+            im = Image.open(item_score['image_name'])
             resized = im.resize((100, 100), Image.ANTIALIAS)
             tkimage = ImageTk.PhotoImage(resized)
             self.output_image_label_list[image_count].config(image=tkimage)
@@ -132,31 +137,31 @@ class UI_class:
     """
         Feature Process & Search functions
     """
-    # Process with color histogram
-    def process_ch(self):
-        # process query image to feature vector
-        # initialize the image descriptor
-        cd = ColorDescriptor((8, 12, 3))
-
-        # load the query image and describe it
-        query = cv2.imread(self.filename)
-        return cd.describe(query)
-
-
-    # Search with CH
-    def search_ch(self, query):
-        # perform the on_search
-        searcher = CH_Searcher("index.csv")
-        return searcher.search(query)
-
-
-    # Prcess with visual concept
-    def process_vc(self):
-        # To be implemented
-        return None
+    # # Process with color histogram
+    # def process_ch(self):
+    #     # process query image to feature vector
+    #     # initialize the image descriptor
+    #     cd = ColorDescriptor((8, 12, 3))
+    #
+    #     # load the query image and describe it
+    #     query = cv2.imread(self.filename)
+    #     return cd.describe(query)
+    #
+    #
+    # # Search with CH
+    # def search_ch(self, query):
+    #     # perform the on_search
+    #     searcher = CH_Searcher("index.csv")
+    #     return searcher.search(query)
+    #
+    #
+    # # Prcess with visual concept
+    # def process_vc(self):
+    #     # To be implemented
+    #     return None
 
 
 if __name__ == "__main__":
     root = Tk()
-    window = UI_class(root, 'dataset')
+    window = UI_class(root)
     window.run()

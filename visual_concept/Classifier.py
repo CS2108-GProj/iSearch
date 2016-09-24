@@ -50,9 +50,9 @@ DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-
 
 class Classifier:
     def __init__(self):
-        self.model_dir = './imagenet'
-        self.index_dir = './indexes'
-        self.index_file = './index.csv'
+        self.model_dir = './visual_concept/imagenet'
+        self.index_dir = './visual_concept/indexes'
+        self.index_file = './visual_concept/index.csv'
 
     def create_graph(self):
         """Creates a graph from saved GraphDef file and returns a saver."""

@@ -13,7 +13,6 @@ Yangqing Jia, jiayq@eecs.berkeley.edu
 
 import numpy as np
 from scipy import signal
-from matplotlib import pyplot
 
 # sift features
 Nangles = 8

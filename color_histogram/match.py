@@ -51,7 +51,7 @@ class Searcher:
 
         # sort our results, so that the smaller distances (i.e. the
         # more relevant images are at the front of the list)
-        results = sorted([(v, k) for (k, v) in results.items()])
+        results = sorted([(k, v) for (k, v) in results.items()])
 
         # return our (limited) results
         return results[:limit]
@@ -65,5 +65,5 @@ class Searcher:
         return d
 
 if __name__ == "__main__":
-    sample_query = "sample.jpg"
+    sample_query = '../ImageData/test/data/dog/0324_161473185.jpg'
     print Searcher().search(sample_query)

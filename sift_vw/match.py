@@ -9,8 +9,7 @@ class Searcher:
         # store our index path
         self.data_set_path = data_set_path
         self.image_set_path = image_set_path
-
-        if not os.path.exists(image_set_path):
+        if not os.path.exists(data_set_path):
             prepare_local(image_set_path, sift2, LSH_sift, data_set_path)
 
     def load(self, pin, obj):
