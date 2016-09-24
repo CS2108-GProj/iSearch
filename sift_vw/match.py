@@ -37,10 +37,10 @@ class Searcher:
         sort_list = sorted(result_list, key=lambda d: d[1])
         return sort_list[:threshold]
 
-    def search(self, query_img_path, threshold=10):
+    def search(self, query_image, limit=10):
         sift_index = {}
         self.load(self.data_set_path, sift_index)
-        return self.match(query_img_path, sift_index, sift2, LSH_sift, threshold)
+        return self.match(query_image, sift_index, sift2, LSH_sift, limit)
 
 if __name__ == "__main__":
     #setname = 'ferrari'
