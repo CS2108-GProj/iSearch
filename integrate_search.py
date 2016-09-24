@@ -12,8 +12,8 @@ VC_SCORE = 'VC_score'
 NULL_NAME = 'NULL'
 
 # Define ratio
-CH_RATIO = 0.1
-VW_RATIO = 0.1
+CH_RATIO = -0.1
+VW_RATIO = -0.1
 VC_RATIO = 0.1
 
 def search(query, CH=False, VW=False, VC=False, threshold=10):
@@ -47,7 +47,7 @@ def get_sorted_integrate_score(integrated_score):
 
         unsorted_integrated_score.append({IMAGE_NAME: item_name, TOTAL_SCORE: total_score, FEATURE_SCORE: integrated_score[item_name]})
 
-    return sorted(unsorted_integrated_score, key=lambda item_score: item_score[TOTAL_SCORE])
+    return sorted(unsorted_integrated_score, key=lambda item_score: item_score[TOTAL_SCORE], reverse=True)
 
 
 # Initialize integrated score panel
@@ -117,11 +117,11 @@ def get_null_score(threshold):
 
 
 def get_CH_name(item):
-    return item[0]
+    return item[1]
 
 
 def get_CH_score(item):
-    return item[1]
+    return item[0]
 
 
 def get_VW_name(item):
@@ -141,7 +141,7 @@ def get_VC_score(item):
 
 
 if __name__ == "__main__":
-    ch = [('a', 1), ('b', 1), ('c', 1)]
+    ch = [(1, 'a'), (1, 'b'), (1, 'c')]
     vw = [('a', 1), ('c', 1), ('d', 1)]
     vc = get_null_score(3)
 
